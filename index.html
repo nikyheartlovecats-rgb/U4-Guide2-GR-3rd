@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colegio Montano - Interactive Whiteboard Guide: Unit 4 Grammar</title>
+    <style>
+        :root {
+            --primary-blue: #1269A8;
+            --bright-yellow: #F7D615;
+            --muted-green: #54887D;
+            --light-blue: #88B5C7;
+            --olive-green: #A6B046;
+            --soft-white: #F2F5E9;
+            --text-dark: #2C3E50;
+            --card-bg: #FFFFFF;
+            --shadow: 0 8px 24px rgba(18, 105, 168, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--soft-white);
+            color: var(--text-dark);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .whiteboard-container {
+            width: 100%;
+            max-width: 1280px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 4px solid var(--bright-yellow);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header Styles */
+        .whiteboard-header {
+            background: var(--primary-blue);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--bright-yellow);
+        }
+
+        .school-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .school-brand img {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--bright-yellow);
+            background: white;
+        }
+
+        .brand-titles h1 {
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-titles p {
+            font-size: 0.95rem;
+            color: var(--light-blue);
+            font-weight: 600;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .fullscreen-btn {
+            background: var(--bright-yellow);
+            color: var(--text-dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .fullscreen-btn:hover {
+            background: #e5c40e;
+            transform: translateY(-2px);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: var(--light-blue);
+            overflow-x: auto;
+            border-bottom: 3px solid var(--muted-green);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 14px 24px;
+            color: var(--text-dark);
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: var(--primary-blue);
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--primary-blue);
+            border-bottom: 4px solid var(--primary-blue);
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 30px;
+            max-height: 72vh;
+            overflow-y: auto;
+            background: #FAFAFA;
+        }
+
+        .section-panel {
+            display: none;
+        }
+
+        .section-panel.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2.section-title {
+            color: var(--primary-blue);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            border-bottom: 3px solid var(--bright-yellow);
+            padding-bottom: 8px;
+        }
+
+        h3.subsection-title {
+            color: var(--muted-green);
+            font-size: 1.3rem;
+            margin: 25px 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p.description {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Theory Cards & Tables */
+        .theory-card {
+            background: white;
+            border-left: 6px solid var(--primary-blue);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .grammar-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .grammar-table th, .grammar-table td {
+            border: 1px solid #d1dedc;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .grammar-table th {
+            background: var(--muted-green);
+            color: white;
+            font-weight: 600;
+        }
+
+        .grammar-table tr:nth-child(even) {
+            background: #f4f8f7;
+        }
+
+        /* Level Badge */
+        .badge {
+            display: inline-block;
+            background: var(--olive-green);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        /* Cards for Examples & Exercises */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+
+        .item-card {
+            background: white;
+            border: 2px solid var(--light-blue);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .item-card h4 {
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .solution-box {
+            background: #e8f4f2;
+            border-left: 4px solid var(--muted-green);
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 0 8px 8px 0;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .toggle-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+            align-self: flex-start;
+            transition: background 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: #0d4e7d;
+        }
+
+        /* Reflection list */
+        .reflection-list {
+            list-style-type: none;
+            counter-reset: reflection-counter;
+        }
+
+        .reflection-list li {
+            counter-increment: reflection-counter;
+            background: white;
+            padding: 18px 20px 18px 60px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--bright-yellow);
+        }
+
+        .reflection-list li::before {
+            content: counter(reflection-counter);
+            position: absolute;
+            left: 20px;
+            top: 18px;
+            background: var(--primary-blue);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Footer styling */
+        .whiteboard-footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 12px 25px;
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 2px solid var(--bright-yellow);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="whiteboard-container" id="boardContainer">
+        <!-- Header -->
+        <header class="whiteboard-header">
+            <div class="school-brand">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEop0yf6lZ7Jk9MILZxF1rBj4Oqs5esyhIQ&s" alt="Colegio Montano Logo">
+                <div class="brand-titles">
+                    <h1>Colegio Montano — Third Grade</h1>
+                    <p>Interactive Digital Whiteboard | Our World 3 (Unit 4)</p>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">[ ⛶ Fullscreen ]</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'tab-theory')">1. Theory</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab-examples')">2. Resolved Examples</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab-exercises')">3. Practice Exercises</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab-reflection')">4. Critical Reflection</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab-evaluation')">5. Formative Evaluation</button>
+        </nav>
+
+        <!-- Main Content Canvas Area -->
+        <div class="content-area">
+
+            <!-- SECTION 1: THEORY -->
+            <div id="tab-theory" class="section-panel active">
+                <h2 class="section-title">Unit 4: Grammar Theory Reference</h2>
+                <p class="description">Welcome to our digital whiteboard session! In Unit 4, we learn how to talk about past activities using <strong>Simple Past Wh- questions and negative sentences</strong>, as well as expression formulas like <strong>go + verb + -ing</strong>.</p>
+
+                <h3 class="subsection-title">Part 1: Simple Past (Wh- Questions and Negatives)</h3>
+                <div class="theory-card">
+                    <p>We use the auxiliary verb <strong>did</strong> and <strong>didn't</strong> (did not) for past actions in questions and negatives. Notice that the main verb stays in its base form when using *did/didn't*!</p>
+                    <table class="grammar-table">
+                        <tr>
+                            <th>Type</th>
+                            <th>Formula / Structure</th>
+                            <th>Example</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Wh- Question</strong></td>
+                            <td>Wh- word + did + subject + base verb + ...?</td>
+                            <td>What <strong>did</strong> you <strong>do</strong> last weekend?</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Negative</strong></td>
+                            <td>Subject + didn't + base verb + ...</td>
+                            <td>I <strong>didn't go</strong> out. I <strong>stayed</strong> home.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Yes/No Question</strong></td>
+                            <td>Did + subject + base verb + ...?</td>
+                            <td><strong>Did</strong> your team <strong>win</strong>? No, they didn't.</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3 class="subsection-title">Part 2: Expressing Hobbies with "go + verb + -ing"</h3>
+                <div class="theory-card">
+                    <p>To talk about leisure activities and sports in the past, present, or future, we combine the verb <strong>go</strong> (or *goes*, *went*) with an activity ending in <strong>-ing</strong>.</p>
+                    <table class="grammar-table">
+                        <tr>
+                            <th>Tense</th>
+                            <th>Subject</th>
+                            <th>Structure</th>
+                            <th>Example</th>
+                        </tr>
+                        <tr>
+                            <td>Present</td>
+                            <td>I / You / We / They</td>
+                            <td>go + verb-ing</td>
+                            <td>I <strong>go swimming</strong> on weekends.</td>
+                        </tr>
+                        <tr>
+                            <td>Present (3rd person)</td>
+                            <td>He / She / It</td>
+                            <td>goes + verb-ing</td>
+                            <td>She <strong>goes hiking</strong> in the mountains.</td>
+                        </tr>
+                        <tr>
+                            <td>Past</td>
+                            <td>All subjects (I, He, She...)</td>
+                            <td>went + verb-ing</td>
+                            <td>They <strong>went shopping</strong> yesterday.</td>
+                        </tr>
+                        <tr>
+                            <td>Past Negative</td>
+                            <td>All subjects</td>
+                            <td>didn't go + verb-ing</td>
+                            <td>He <strong>didn't go fishing</strong> last week.</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 2: RESOLVED EXAMPLES -->
+            <div id="tab-examples" class="section-panel">
+                <h2 class="section-title">Resolved Examples (15 Total: 5 Basic, 5 Intermediate, 5 Advanced)</h2>
+                <p class="description">Review these fully solved examples step-by-step to understand how grammar structures are applied correctly.</p>
+
+                <!-- BASIC LEVEL EXAMPLES -->
+                <span class="badge">Basic Level Examples</span>
+                <div class="card-grid">
+                    <div class="item-card">
+                        <h4>Example B1: Negative Past Statement</h4>
+                        <p><strong>Prompt:</strong> Complete with *didn't* + verb: "I ____ (visit) a museum. It was interesting."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> I <strong>didn't visit</strong> a museum.<br><em>Explanation:</em> Use "didn't" followed by the base verb "visit".</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example B2: Wh- Question in Past</h4>
+                        <p><strong>Prompt:</strong> Form the question: "How / your weekend?"</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> How <strong>was</strong> your weekend?<br><em>Explanation:</em> With the verb 'to be' in the past, we use "was" instead of "did". Answer: "It was exciting."</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example B3: Present 'go + -ing'</h4>
+                        <p><strong>Prompt:</strong> Complete: "She ____ (go swimming) on Saturdays."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> She <strong>goes swimming</strong>.<br><em>Explanation:</em> For third-person singular (She), "go" changes to "goes" in present simple.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example B4: Past 'go + -ing'</h4>
+                        <p><strong>Prompt:</strong> Complete: "They ____ (go hiking) last Sunday."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> They <strong>went hiking</strong>.<br><em>Explanation:</em> In the past tense, "go" becomes the irregular past form "went".</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example B5: Simple Past Yes/No Question</h4>
+                        <p><strong>Prompt:</strong> Answer the question: "Did you eat out?" (Negative answer)</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> No, I <strong>didn't</strong>. We ate pizza at home.<br><em>Explanation:</em> Short negative answers require "didn't".</div>
+                    </div>
+                </div>
+
+                <!-- INTERMEDIATE LEVEL EXAMPLES -->
+                <span class="badge" style="background: var(--muted-green);">Intermediate Level Examples</span>
+                <div class="card-grid">
+                    <div class="item-card">
+                        <h4>Example I1: Wh- Question and Answer Pair</h4>
+                        <p><strong>Prompt:</strong> Match: "What did you do last weekend?" with "I stayed home / fly."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> I <strong>stayed home</strong>.<br><em>Explanation:</em> The question asks about past actions, so the response uses past tense verbs ("stayed").</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example I2: Negative with team sports</h4>
+                        <p><strong>Prompt:</strong> Fill in: "I played soccer, but my team ____ (win). I was sad."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> my team <strong>didn't win</strong>.<br><em>Explanation:</em> Since the person was sad, the team lost, expressed as the negative past "didn't win".</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example I3: Past Negative 'go + -ing'</h4>
+                        <p><strong>Prompt:</strong> Complete: "He ____ (go shopping) yesterday; he stayed indoors."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> He <strong>didn't go shopping</strong>.<br><em>Explanation:</em> Past negative uses "didn't go" + verb-ing.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example I4: Interrogative 'go + -ing'</h4>
+                        <p><strong>Prompt:</strong> Form question: "What / you / do / on the weekend? (fishing)"</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> What did you do on the weekend? I <strong>went fishing</strong>.<br><em>Explanation:</em> Combining past Wh- question structure with the "go + -ing" activity.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example I5: Irregular Verbs in Negative Context</h4>
+                        <p><strong>Prompt:</strong> Complete: "My brother ____ (lose) the game; he won first place!"</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> My brother <strong>didn't lose</strong> the game.<br><em>Explanation:</em> Winning means he did not lose ("didn't lose").</div>
+                    </div>
+                </div>
+
+                <!-- ADVANCED LEVEL EXAMPLES -->
+                <span class="badge" style="background: var(--primary-blue);">Advanced Level Examples</span>
+                <div class="card-grid">
+                    <div class="item-card">
+                        <h4>Example A1: Multi-clause Past Contrast</h4>
+                        <p><strong>Prompt:</strong> Complete: "I texted my friend, but he ____ (be busy) and ____ (text) me back."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> ...he <strong>was</strong> busy and <strong>didn't text</strong> me back.<br><em>Explanation:</em> Combines past state ("was") with past negative action ("didn't text").</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example A2: Complex Wh- Question Formulation</h4>
+                        <p><strong>Prompt:</strong> Formulate a question for: "She went horseback riding through the forest."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> What <strong>did</strong> she <strong>do</strong> last weekend? / Where <strong>did</strong> she <strong>go horseback riding</strong>?<br><em>Explanation:</em> Uses auxiliary "did" with base verb "do" or "go".</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example A3: Comparative Past Activities</h4>
+                        <p><strong>Prompt:</strong> Answer: "What didn't Mai do? (riding horses / fishing)" based on image where she rode a horse.</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> She <strong>didn't go fishing</strong>. She <strong>went horseback riding</strong>.<br><em>Explanation:</em> Contrast between what was done (went + -ing) and what wasn't done (didn't go + -ing).</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example A4: Third-person vs First-person Past Negative</h4>
+                        <p><strong>Prompt:</strong> Correct the error: "He didn't stayed home yesterday."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> He <strong>didn't stay</strong> home yesterday.<br><em>Explanation:</em> After "didn't", the verb must return to its base form ("stay", not "stayed").</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Example A5: Integrated Storytelling</h4>
+                        <p><strong>Prompt:</strong> Complete: "My family ____ (eat out). We ____ (stay) home and ____ (cook) dinner."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> My family <strong>didn't eat out</strong>. We <strong>stayed</strong> home and <strong>cooked</strong> dinner.<br><em>Explanation:</em> Combining a negative past statement with affirmative past regular verbs.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: PRACTICE EXERCISES -->
+            <div id="tab-exercises" class="section-panel">
+                <h2 class="section-title">Practice Exercises (15 Total: 5 Basic, 5 Intermed., 5 Advanced)</h2>
+                <p class="description">Test your knowledge! Try solving these exercises on your own before clicking "Show Solution" to check your answers.</p>
+
+                <!-- BASIC LEVEL EXERCISES -->
+                <span class="badge">Basic Level Exercises</span>
+                <div class="card-grid">
+                    <div class="item-card">
+                        <h4>Exercise B1</h4>
+                        <p>Complete: "I ____ (visit) my grandparents last weekend." (Affirmative past)</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> I <strong>visited</strong> my grandparents last weekend.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise B2</h4>
+                        <p>Complete with negative: "We ____ (play) soccer on Monday."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> We <strong>didn't play</strong> soccer on Monday.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise B3</h4>
+                        <p>Complete with 'go + -ing' (present): "He ____ (go swimming) on hot days."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> He <strong>goes swimming</strong> on hot days.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise B4</h4>
+                        <p>Complete with past 'go + -ing': "They ____ (go shopping) yesterday afternoon."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> They <strong>went shopping</strong> yesterday afternoon.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise B5</h4>
+                        <p>Form a Yes/No past question: "____ you watch TV last night?"</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> <strong>Did</strong> you watch TV last night?</div>
+                    </div>
+                </div>
+
+                <!-- INTERMEDIATE LEVEL EXERCISES -->
+                <span class="badge" style="background: var(--muted-green);">Intermediate Level Exercises</span>
+                <div class="card-grid">
+                    <div class="item-card">
+                        <h4>Exercise I1</h4>
+                        <p>Complete the Wh- question: "What ____ you do on Sunday?"</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> What <strong>did</strong> you do on Sunday?</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise I2</h4>
+                        <p>Fill in the blanks: "My brother ____ home after dinner. He went to the movies." (stay)</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> My brother <strong>didn't stay</strong> home after dinner.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise I3</h4>
+                        <p>Complete: "What did Ivan do last weekend? He ____ (go hiking)."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> He <strong>went hiking</strong>.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise I4</h4>
+                        <p>Write the negative activity: "Mai ____ (go shopping) last weekend; she stayed home."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> Mai <strong>didn't go shopping</strong> last weekend.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise I5</h4>
+                        <p>Complete: "Did your team win?" Answer: "No, they ____."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> No, they <strong>didn't</strong>. (Or: No, they didn't win. They lost.)</div>
+                    </div>
+                </div>
+
+                <!-- ADVANCED LEVEL EXERCISES -->
+                <span class="badge" style="background: var(--primary-blue);">Advanced Level Exercises</span>
+                <div class="card-grid">
+                    <div class="item-card">
+                        <h4>Exercise A1</h4>
+                        <p>Correct the mistake: "What did she did yesterday?"</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> What <strong>did</strong> she <strong>do</strong> yesterday?<br><em>Explanation:</em> Only the auxiliary "did" is in the past; the main verb remains "do".</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise A2</h4>
+                        <p>Complete the dialogue: "Did you fly in a helicopter?" -> "Yes, I ____ (fly) in a helicopter!"</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> Yes, I <strong>flew</strong> in a helicopter!<br><em>Explanation:</em> Affirmative past statements use the past form of the verb ("fly" -> "flew").</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise A3</h4>
+                        <p>Combine negative and affirmative: "We ____ (go to the park). Instead, we ____ (go to the museum)."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> We <strong>didn't go</strong> to the park. Instead, we <strong>went</strong> to the museum.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise A4</h4>
+                        <p>Form a question and answer: "(What / your brother / do?) -> He / play soccer."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> What <strong>did</strong> your brother <strong>do</strong>? He <strong>played</strong> soccer.</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Exercise A5</h4>
+                        <p>Fill in the complete sentence: "My friends ____ (not / go fishing); they ____ (go swimming) at the lake."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> My friends <strong>didn't go fishing</strong>; they <strong>went swimming</strong> at the lake.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 4: CRITICAL REFLECTION -->
+            <div id="tab-reflection" class="section-panel">
+                <h2 class="section-title">Critical Reflection Questions</h2>
+                <p class="description">Think deeply about these questions and discuss them with your classmates or teacher to build strong conceptual logic.</p>
+
+                <ul class="reflection-list">
+                    <li>
+                        <strong>Why do we use the base form of the main verb (like *go* or *stay*) after the auxiliary word *didn't* in past negative sentences?</strong>
+                        <p style="margin-top: 8px; color: #555;"><em>Hint:</em> Think about how the word "did" already shows that the sentence is in the past tense, so the main verb doesn't need to change again!</p>
+                    </li>
+                    <li>
+                        <strong>How does changing *go* to *went* or *goes* change the time or person in sentences with *go + -ing* (like *go swimming*)?</strong>
+                        <p style="margin-top: 8px; color: #555;"><em>Hint:</em> Compare "She goes swimming every week" with "She went swimming last weekend." What do the words *goes* and *went* tell us about when the action happened?</p>
+                    </li>
+                    <li>
+                        <strong>Imagine you are interviewing a friend about their last vacation. Why are Wh- questions (using *What*, *Where*, *How*) more useful than Yes/No questions (*Did you...*)?</strong>
+                        <p style="margin-top: 8px; color: #555;"><em>Hint:</em> Consider whether a Yes/No question gives you detailed stories or just short answers.</p>
+                    </li>
+                    <li>
+                        <strong>When talking about team sports or games, what is the difference between saying "My team won" and "My team didn't win"?</strong>
+                        <p style="margin-top: 8px; color: #555;"><em>Hint:</em> Think about the outcome of the game and how negation shifts the meaning completely.</p>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- SECTION 5: FORMATIVE EVALUATION -->
+            <div id="tab-evaluation" class="section-panel">
+                <h2 class="section-title">Formative Evaluation with Hidden Solutions</h2>
+                <p class="description">Test your mastery of Unit 4 grammar. Click "Show Solution" to verify your answers step-by-step.</p>
+
+                <div class="card-grid">
+                    <div class="item-card">
+                        <h4>Question 1: Wh- Question Correction</h4>
+                        <p><strong>Task:</strong> Find and fix the error: "What did you went last Saturday?"</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> What did you <strong>go</strong> last Saturday? (Or: Where did you go?)<br><em>Explanation:</em> After "did", the verb must be in base form ("go", not "went"). Also, for a location, "Where" is more appropriate than "What".</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Question 2: Negative Formulation</h4>
+                        <p><strong>Task:</strong> Transform into past negative: "I visited the science museum."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> I <strong>didn't visit</strong> the science museum.<br><em>Explanation:</em> Change "visited" to "didn't visit" (base form).</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Question 3: 'go + -ing' Past Application</h4>
+                        <p><strong>Task:</strong> Complete: "Last summer, my sister and I ____ (go hiking) in the mountains."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> Last summer, my sister and I <strong>went hiking</strong> in the mountains.<br><em>Explanation:</em> "Last summer" indicates past tense, so "go" becomes "went".</div>
+                    </div>
+                    <div class="item-card">
+                        <h4>Question 4: Dialogue Completion</h4>
+                        <p><strong>Task:</strong> Complete the dialogue:<br>A: "____ you eat out on Friday?"<br>B: "No, we ____. We cooked dinner at home."</p>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Show Solution</button>
+                        <div class="solution-box"><strong>Solution:</strong> <strong>Did</strong> you eat out on Friday? No, we <strong>didn't</strong>.<br><em>Explanation:</em> Past question starts with "Did" and short negative response uses "didn't".</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="whiteboard-footer">
+            <p>&copy; 2026 Colegio Montano. Educational Technology & Instructional Design Department. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching logic
+        function switchTab(event, tabId) {
+            const panels = document.querySelectorAll('.section-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Toggle solution visibility
+        function toggleSolution(button) {
+            const solutionBox = button.nextElementSibling;
+            if (solutionBox.style.display === 'block') {
+                solutionBox.style.display = 'none';
+                button.textContent = 'Show Solution';
+            } else {
+                solutionBox.style.display = 'block';
+                button.textContent = 'Hide Solution';
+            }
+        }
+
+        // Fullscreen toggle logic using Fullscreen API
+        function toggleFullscreen() {
+            const container = document.getElementById('boardContainer');
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
